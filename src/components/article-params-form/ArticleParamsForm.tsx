@@ -1,7 +1,8 @@
 import styles from './ArticleParamsForm.module.scss';
 import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
-import { useState, FormEvent, useCallback } from 'react';
+import { useState, useRef, FormEvent, useCallback } from 'react';
+import { useClose } from 'src/hooks/useClose';
 import clsx from 'clsx';
 import { Text } from 'components/text';
 import { Select } from 'components/select';
@@ -25,6 +26,14 @@ export type ArticleParamsFormProps = {
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const { setAppState } = props;
 	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+	const formRef = useRef<HTMLElement>(null);
+
+	useClose({
+		isOpen: isMenuOpen,
+		onClose: () => setIsMenuOpen(false),
+		rootRef: formRef,
+	});
 
 	const toggleIsOpened = useCallback(() => {
 		setIsMenuOpen((currentIsOpened) => !currentIsOpened);
@@ -54,12 +63,8 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	return (
 		<>
 			<ArrowButton isOpen={isMenuOpen} onClick={toggleIsOpened} />
-			<div
-				onClick={toggleIsOpened}
-				className={clsx(styles.overlay, {
-					[styles.overlay_open]: isMenuOpen,
-				})}></div>
 			<aside
+				ref={formRef}
 				className={clsx(styles.container, {
 					[styles.container_open]: isMenuOpen,
 				})}>
